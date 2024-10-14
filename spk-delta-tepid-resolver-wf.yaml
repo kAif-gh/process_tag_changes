@@ -7,7 +7,7 @@ metadata:
   namespace: tep
 data:
   tep_id_mapping_sample.csv: |
-    oldTepId,newTepId
+    sourceTepId,targetTepId
     97c1e0cf-5b0e-42ef-ad3f-b420c6da83b6,120f2f09-91e6-4252-9cf2-910ea361b475
     781a37e7-071e-4bad-92f6-5af7051f4d7b,914a27f1-f2b7-49b1-8089-05dd9258d9c5
     cdb843ef-b593-4031-ba87-a02916147799,2a1b69c2-848e-4b84-9aee-f0a2abe81c8b
@@ -48,11 +48,13 @@ spec:
       - name: num-cores-limits
         value: "1"
       - name: start-date
-        value: "2024-02-28"
+        value: "2024-02-29"
       - name: end-date
-        value: "2024-07-23"
+        value: "2024-03-01"
+      - name: table-name
+        value: "scada_signal"
       - name: days-to-process
-        value: "30"
+        value: "1"
   templates:
     - name: spk-delta-tepid-resolver
       parallelism: 1
@@ -68,6 +70,8 @@ spec:
                 value: "{{item.start_date}}"
               - name: endDate
                 value: "{{item.end_date}}"
+              - name: tableName
+                value: "{{item.table_name}}"
     - name: gen-months-python
       script:
         image: auroradevacr.azurecr.io/tep/pandas:3.11.3
@@ -89,6 +93,7 @@ spec:
         parameters:
           - name: startDate
           - name: endDate
+          - name: tableName
       resource:
         action: create
         failureCondition: status.applicationState.state == FAILED
@@ -145,8 +150,6 @@ spec:
               env:
                 - name: APPNAME
                   value: delta-tepid-processor
-                - name: KAFKAPROPS_MAX_OFFSETS_PER_TRIGGER
-                  value: "1000"
                 - name: DELTA_READ_STREAMING
                   value: "false"
                 - name: DELTA_DATA_TYPE
@@ -155,22 +158,14 @@ spec:
                   value: "abfss://enterprise@dlstepdbdev.dfs.core.windows.net/scada/scada_signal"
                 - name: DELTA_OUT
                   value: "abfss://enterprise@dlstepdbdev.dfs.core.windows.net/scada/scada_signal"
-                - name: DELTA_CHECKPOINT_LOCATION
-                  value: "abfss://enterprise@dlstepdbdev.dfs.core.windows.net/chkpts/scada/scada_signal"
-                - name: DELTA_TRIGGER_INTERVAL
-                  value: "5 minutes"
-                - name: KAFKAPROPS_CHECKPOINT_LOCATION
-                  value: "abfss://enterprise@dlstepdbdev.dfs.core.windows.net/chkpts/scada/scada_signal"
-                - name: AGG_CHECK_POINT_PATH
-                  value: "abfss://enterprise@dlstepdbdev.dfs.core.windows.net/chkpts/scada/scada_signal"
                 - name: START_DATE
                   value: "{{inputs.parameters.startDate}}"
                 - name: END_DATE
                   value: "{{inputs.parameters.endDate}}"
+                - name: TABLE_NAME
+                  value: "{{inputs.parameters.tableName}}"
                 - name: DELTA_COMPRESSION_TYPE
                   value: "zstd"
-                - name: AZURE_SCOPES
-                  value: "api://8884d831-f8ef-41f3-b4d5-2d655d93b867/.default"
                 - name: FILE_PATH
                   value: "/opt/spark/config/tep_id_mapping_sample.csv"  # Reference to the ConfigMap file location
               envFrom:

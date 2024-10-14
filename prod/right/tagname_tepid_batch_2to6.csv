@@ -1,0 +1,6 @@
+OldTagName,NewTagName,createdTimeNewTag,old tep_id,new tep_id
+DBA.OCS.OFTO.CableMonitoringSystem.HVDCGISCellarHighTemperatureAlarm.Alm.stVal,DBA.OCS.OFTO.CableMonitoringSystem.HVDCGIScellarHighTemperatureAlarm.Alm.stVal,2024-02-29 23:59:59.999999,49c38dd0-6c33-4119-9a03-fa676b3e072c,57e4323a-4cbb-432c-8dc4-4f384d65317c
+DBA.OCS.OFTO.CableMonitoringSystem.HVDCGISCellarHighTemperatureWarning.Wrn.stVal,DBA.OCS.OFTO.CableMonitoringSystem.HVDCGIScellarHighTemperatureWarning.Wrn.stVal,2024-02-29 23:59:59.999999,fc3da189-a99b-4874-b215-3f2772d07c06,185c9df0-b3a5-440c-80cd-13e7437717d4
+DBA.OCS.OFTO.Converter_Bus_Voltage.Vol.mag,DBA.OCS.OFTO.HVAC.ACSwitchYard.Converter_Bus_Voltage.Vol.mag,2024-02-29 23:59:59.999999,95c39fce-80c8-405d-b732-1246c37f1e7e,458739ff-72ab-4f53-9bb7-80bf5b0c290b
+DBA.OCS.OFTO.Deblock_Indication.Ind.stVal,DBA.OCS.OFTO.HVAC.ACSwitchYard.Deblock_Indication.Ind.stVal,2024-02-29 23:59:59.999999,9bc76af1-7f58-4dba-91cd-603fe45bfa51,a79e8530-674b-42a8-babe-1a8b4ac1bf36
+DBA.OCS.OFTO.Netural_Current.Amp.mag,DBA.OCS.OFTO.HVAC.ACSwitchYard.Netural_Current.Amp.mag,2024-03-01 23:59:59.999999,75f22478-8915-48b0-b6ad-28f7c9119834,812ab2e6-0704-4134-80a3-1a1b21f4ecc1
