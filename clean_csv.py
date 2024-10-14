@@ -44,8 +44,8 @@ def strip_csv2(input_file, column_names, output_file):
 # csv_file = "./prod/right/tag_name_changes.csv"
 # df = pd.read_csv(csv_file)
 
-# csv_file_test = "./preprod/sample_tag_name_changes.csv"
-# strip_csv2(csv_file, ["OldTagName", "NewTagName"], "test.csv")
+# csv_file_test = "strip_test.csv"
+# strip_csv2(csv_file, ["OldTagName", "NewTagName"], "output_strip_test.csv")
 
 # cleaned_df = drop_nan_rows(df, ["Dgraph Name"])
 # cleaned_df = drop_nan_rows(df, ["createdTimeNewTag"])
