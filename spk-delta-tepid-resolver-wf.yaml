@@ -1,0 +1,243 @@
+---
+# ConfigMap for TEP ID Mapping CSV
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tep-id-mapping-cm
+  namespace: tep
+data:
+  tep_id_mapping_sample.csv: |
+    oldTepId,newTepId
+    97c1e0cf-5b0e-42ef-ad3f-b420c6da83b6,120f2f09-91e6-4252-9cf2-910ea361b475
+    781a37e7-071e-4bad-92f6-5af7051f4d7b,914a27f1-f2b7-49b1-8089-05dd9258d9c5
+    cdb843ef-b593-4031-ba87-a02916147799,2a1b69c2-848e-4b84-9aee-f0a2abe81c8b
+    7720bce4-0dd7-42ed-92b1-70caaf213d36,7bf49194-1fcc-40b8-82df-c0cdb5791894
+
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  name: spk-delta-tepid-resolver-wf
+  namespace: tep
+  labels:
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: tep
+    app.kubernetes.io/part-of: storm-data-platform
+    app.kubernetes.io/version: "0.0.1"
+    helm.sh/chart: tep-1.0.2
+    WBS: E.RDI.10959
+    costallocationcode: e.rdi.10959
+    costallocationtype: wbs
+    project: doggerbankdev
+    subproject: tep
+    version: 3.5.0
+spec:
+  entrypoint: spk-delta-tepid-resolver
+  podGC:
+    strategy: OnWorkflowSuccess
+  serviceAccountName: workflow-runner
+  arguments:
+    parameters:
+      - name: num-cores
+        value: "1"
+      - name: memory
+        value: "8G"
+      - name: instances
+        value: "4"
+      - name: num-cores-limits
+        value: "1"
+      - name: start-date
+        value: "2024-02-28"
+      - name: end-date
+        value: "2024-07-23"
+      - name: days-to-process
+        value: "30"
+  templates:
+    - name: spk-delta-tepid-resolver
+      parallelism: 1
+      steps:
+        - - name: generate
+            template: gen-months-python
+        - - name: spk-delta-tepid-resolver-monthly
+            template: spk-delta-tepid
+            withParam: "{{steps.generate.outputs.result}}"
+            arguments:
+              parameters:
+              - name: startDate
+                value: "{{item.start_date}}"
+              - name: endDate
+                value: "{{item.end_date}}"
+    - name: gen-months-python
+      script:
+        image: auroradevacr.azurecr.io/tep/pandas:3.11.3
+        command: [python]
+        source: |
+          import pandas as pd
+          import json
+          start_date = pd.to_datetime("{{workflow.parameters.start-date}}")
+          end_date = pd.to_datetime("{{workflow.parameters.end-date}}") + pd.Timedelta(days=1) # Last day in config is included.
+          date_range = pd.date_range(start_date, end_date, freq='{{workflow.parameters.days-to-process}}D').tolist()
+          # Ensure the last interval reaches the end date
+          if date_range[-1] < end_date:
+            date_range.append(end_date)
+          dates = [{"start_date": date_range[i].strftime("%Y-%m-%d"), "end_date": (date_range[i+1]-pd.Timedelta(days=1)).strftime("%Y-%m-%d")} for i in range(len(date_range)-1)]
+          print(json.dumps(dates,indent=4))
+          json.dumps(dates)
+    - name: spk-delta-tepid
+      inputs:
+        parameters:
+          - name: startDate
+          - name: endDate
+      resource:
+        action: create
+        failureCondition: status.applicationState.state == FAILED
+        successCondition: status.applicationState.state == COMPLETED
+        manifest: |
+          apiVersion: sparkoperator.k8s.io/v1beta2
+          kind: SparkApplication
+          metadata:
+            name: delta-tepid-{{inputs.parameters.endDate}}-processor
+            namespace: tep
+            labels:
+              app.kubernetes.io/instance: release-name
+              app.kubernetes.io/managed-by: Helm
+              app.kubernetes.io/name: tep
+              app.kubernetes.io/part-of: storm-data-platform
+              app.kubernetes.io/version: "0.0.1"
+              helm.sh/chart: tep-1.0.2
+              WBS: E.RDI.10959
+              costallocationcode: e.rdi.10959
+              costallocationtype: wbs
+              project: doggerbankdev
+              subproject: tep
+              version: 3.5.0
+          spec:
+            type: Scala
+            mode: cluster
+            sparkVersion: 3.5.0
+            image: auroradevacr.azurecr.io/sdp/tep-spark-k8s:0.7.80-SNAPSHOT-feat-delta_tepid_processor
+            imagePullPolicy: Always
+            mainClass: com.equinor.ows.tep.jobs.scadaDeltaNewTepIdInjector
+            mainApplicationFile: local:///tep-databricks/jars/jobs-fatjar-1.0.jar
+            arguments:
+              - /tep-databricks/conf/spark-k8s.conf
+            sparkConf:
+              spark.driver.extraJavaOptions: -Duser.timezone=UTC
+              spark.executor.heartbeatInterval: 10s
+              spark.metrics.conf: /tep-databrics/tep-conf/metrics.properties
+              spark.network.timeout: 600s
+              spark.sql.catalog.spark_catalog: org.apache.spark.sql.delta.catalog.DeltaCatalog
+              spark.sql.extensions: io.delta.sql.DeltaSparkSessionExtension
+              spark.sql.session.timeZone: UTC
+              spark.sql.streaming.metricsEnabled: "true"
+              spark.sql.files.ignoreMissingFiles: "true"
+              spark.sql.redaction.options.regex: "(?i)url|(?i)begin"
+              spark.databricks.delta.schema.autoMerge.enabled: "true"
+              spark.memory.storageFraction: "0.4"
+              spark.metrics.appStatusSource.enabled: "true"
+            restartPolicy:
+              type: Never
+            driver:
+              coreLimit: "2"
+              cores: 2
+              memory: 8G
+              env:
+                - name: APPNAME
+                  value: delta-tepid-processor
+                - name: KAFKAPROPS_MAX_OFFSETS_PER_TRIGGER
+                  value: "1000"
+                - name: DELTA_READ_STREAMING
+                  value: "false"
+                - name: DELTA_DATA_TYPE
+                  value: SCADA
+                - name: DELTA_PATH
+                  value: "abfss://enterprise@dlstepdbdev.dfs.core.windows.net/scada/scada_signal"
+                - name: DELTA_OUT
+                  value: "abfss://enterprise@dlstepdbdev.dfs.core.windows.net/scada/scada_signal"
+                - name: DELTA_CHECKPOINT_LOCATION
+                  value: "abfss://enterprise@dlstepdbdev.dfs.core.windows.net/chkpts/scada/scada_signal"
+                - name: DELTA_TRIGGER_INTERVAL
+                  value: "5 minutes"
+                - name: KAFKAPROPS_CHECKPOINT_LOCATION
+                  value: "abfss://enterprise@dlstepdbdev.dfs.core.windows.net/chkpts/scada/scada_signal"
+                - name: AGG_CHECK_POINT_PATH
+                  value: "abfss://enterprise@dlstepdbdev.dfs.core.windows.net/chkpts/scada/scada_signal"
+                - name: START_DATE
+                  value: "{{inputs.parameters.startDate}}"
+                - name: END_DATE
+                  value: "{{inputs.parameters.endDate}}"
+                - name: DELTA_COMPRESSION_TYPE
+                  value: "zstd"
+                - name: AZURE_SCOPES
+                  value: "api://8884d831-f8ef-41f3-b4d5-2d655d93b867/.default"
+                - name: FILE_PATH
+                  value: "/opt/spark/config/tep_id_mapping_sample.csv"  # Reference to the ConfigMap file location
+              envFrom:
+                - secretRef:
+                    name: tep-kafka-tls-connection-values-internal-doggerbankdev
+                - secretRef:
+                    name: tep-redis-db-dev
+                - secretRef:
+                    name: storageaccount-dlstepdbdev
+              javaOptions: -Duser.timezone=UTC
+              labels:
+                WBS: E.RDI.10959
+                app.kubernetes.io/instance: release-name
+                app.kubernetes.io/managed-by: Helm
+                app.kubernetes.io/name: tep
+                app.kubernetes.io/part-of: storm-data-platform
+                app.kubernetes.io/version: 0.0.1
+                azure.workload.identity/use: "true"
+                costallocationcode: e.rdi.10959
+                costallocationtype: wbs
+                helm.sh/chart: tep-1.0.2
+                project: doggerbankdev
+                subproject: tep
+                version: 3.5.0
+              nodeSelector:
+                node-restriction.aurora.equinor.com/purpose: spark
+              serviceAccount: spark-dgraph-reader
+              tolerations:
+                - key: SparkOnly
+                  operator: Equal
+                  value: "true"
+                  effect: NoSchedule
+              volumeMounts:
+                - name: tep-id-mapping-vol
+                  mountPath: /opt/spark/config/
+            executor:
+              instances: {{workflow.parameters.instances}}
+              coreLimit: "{{workflow.parameters.num-cores-limits}}"
+              cores: {{workflow.parameters.num-cores}}
+              memory: "{{workflow.parameters.memory}}"
+              javaOptions: -Duser.timezone=UTC
+              labels:
+                WBS: E.RDI.10959
+                app.kubernetes.io/instance: release-name
+                app.kubernetes.io/managed-by: Helm
+                app.kubernetes.io/name: tep
+                app.kubernetes.io/part-of: storm-data-platform
+                app.kubernetes.io/version: 0.0.1
+                azure.workload.identity/use: "true"
+                costallocationcode: e.rdi.10959
+                costallocationtype: wbs
+                helm.sh/chart: tep-1.0.2
+                project: doggerbankdev
+                subproject: tep
+                version: 3.5.0
+              nodeSelector:
+                node-restriction.aurora.equinor.com/purpose: spark-executors
+              serviceAccount: spark-dgraph-reader
+              tolerations:
+                - key: SparkExecutorsOnly
+                  operator: Equal
+                  value: "true"
+                  effect: NoSchedule
+              volumeMounts:
+                - name: tep-id-mapping-vol
+                  mountPath: /opt/spark/config/
+            volumes:
+              - name: tep-id-mapping-vol
+                configMap:
+                  name: tep-id-mapping-cm

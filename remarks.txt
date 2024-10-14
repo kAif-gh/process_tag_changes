@@ -1,0 +1,38 @@
+so since for spark app done by houssem which need a list of old tep id and the new so i will create a small script to collect the tepids
+and creation date from dgrqph
+
+
+
+
+NEW
+
+
+
+Ghaith BenHaj
+  9:58 AM
+query all queryyis and collect as batch / GraphQuery Sender fel spk
+update tsdb --> ?
+backfill --> spk-backfill-job
+
+Spark Jobs:
+Re-run Spark Backfill Jobs: After a tag rename is complete, re-execute Spark backfill jobs for the relevant time period. This ensures data recovery for the renamed tag within that timeframe.
+TSDB/Delta:
+Data Retention: Old records with the previous tag names will be maintained in TSDB/Delta for historical reference. Backfill job will create a new entries with the updated tag and preserved tepid.
+
+
+Ghaith BenHaj
+  3:29 PM
+Notes:
+nbadlou scada signal delta
+nbadlou fel delta wel tsdb / backfill fi youm mta3 el changement
+tag A -> tag B
+updated the aggregated data (nbadel el path)
+
+https://github.com/equinor/storm-data-platform/pull/482/files
+
+https://github.com/equinor/sdp-services/compare/main...feat/delta_tepid_processor
+
+https://github.com/equinor/tep-k8s/blob/main/templates/spark-jobs/spk-delta-scada-merge.yaml
+
+
+Error querying Dgraph for tag DBA.OCS.OFTO.PQM.P-80EH710.5thHarmonic.HRmsPPV.phsCA.cVal.mag on attempt 1: HTTPSConnectionPool(host='doggerbankprod.aurora.equinor.com', port=443): Max retries exceeded with url: /storm/meta (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x7ed8eb35e260>: Failed to establish a new connection: [Errno -2] Name or service not known'))

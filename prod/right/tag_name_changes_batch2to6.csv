@@ -1,0 +1,6 @@
+OldTagName,NewTagName
+DBA.OCS.OFTO.CableMonitoringSystem.HVDCGISCellarHighTemperatureAlarm.Alm.stVal,DBA.OCS.OFTO.CableMonitoringSystem.HVDCGIScellarHighTemperatureAlarm.Alm.stVal
+DBA.OCS.OFTO.CableMonitoringSystem.HVDCGISCellarHighTemperatureWarning.Wrn.stVal,DBA.OCS.OFTO.CableMonitoringSystem.HVDCGIScellarHighTemperatureWarning.Wrn.stVal
+DBA.OCS.OFTO.Converter_Bus_Voltage.Vol.mag,DBA.OCS.OFTO.HVAC.ACSwitchYard.Converter_Bus_Voltage.Vol.mag
+DBA.OCS.OFTO.Deblock_Indication.Ind.stVal,DBA.OCS.OFTO.HVAC.ACSwitchYard.Deblock_Indication.Ind.stVal
+DBA.OCS.OFTO.Netural_Current.Amp.mag,DBA.OCS.OFTO.HVAC.ACSwitchYard.Netural_Current.Amp.mag

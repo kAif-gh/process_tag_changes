@@ -1,0 +1,44 @@
+Results for column 'new tep_id':
+Start Time (Oldest Timestamp): 2024-02-28 23:59:59.999999
+End Time (Latest Timestamp): 2024-07-23 23:59:59.999999
+All timestamps fetched: [
+                        datetime.datetime(2024, 3, 18, 23, 59, 59, 999999)=3, 
+                        datetime.datetime(2024, 2, 28, 23, 59, 59, 999999)= 7055, 
+                        datetime.datetime(2024, 7, 23, 23, 59, 59, 999999)=165, , 
+                        datetime.datetime(2024, 7, 21, 23, 59, 59, 999999)=19, 
+                        datetime.datetime(2024, 5, 7, 23, 59, 59, 999999)=47, 
+                        ], with number of 7288 (number of unique date are 5)
+
+
+PreProd:
+unique timestamp: {
+                    datetime.datetime(2024, 2, 29, 23, 59, 59, 999999): 6163, 
+                    datetime.datetime(2024, 3, 1, 23, 59, 59, 999999): 17645, 
+                    datetime.datetime(2024, 5, 29, 23, 59, 59, 999999): 2, 
+                    datetime.datetime(2024, 5, 7, 23, 59, 59, 999999): 184, 
+                    datetime.datetime(2024, 6, 10, 23, 59, 59, 999999): 57, 
+                    datetime.datetime(2024, 3, 18, 23, 59, 59, 999999): 5, 
+                    datetime.datetime(2024, 7, 19, 23, 59, 59, 999999): 526, 
+                    datetime.datetime(2024, 7, 18, 23, 59, 59, 999999): 60
+                }
+
+Prod:
+Results for column 'new tep_id':
+Start Time (Oldest Timestamp): 2024-02-29 23:59:59.999999
+End Time (Latest Timestamp): 2024-10-05 23:59:59.999999
+unique timestamp: {
+                    datetime.datetime(2024, 4, 3, 23, 59, 59, 999999): 38, 
+                    datetime.datetime(2024, 2, 29, 23, 59, 59, 999999): 1853, 
+                    datetime.datetime(2024, 3, 1, 23, 59, 59, 999999): 3514, 
+                    datetime.datetime(2024, 10, 5, 23, 59, 59, 999999): 16125, 
+                    datetime.datetime(2024, 4, 7, 23, 59, 59, 999999): 148, 
+                    datetime.datetime(2024, 4, 1, 23, 59, 59, 999999): 19, 
+                    datetime.datetime(2024, 5, 24, 23, 59, 59, 999999): 1293, 
+                    datetime.datetime(2024, 10, 4, 23, 59, 59, 999999): 961, 
+                    datetime.datetime(2024, 10, 3, 23, 59, 59, 999999): 180, 
+                    datetime.datetime(2024, 10, 2, 23, 59, 59, 999999): 343, 
+                    datetime.datetime(2024, 8, 1, 23, 59, 59, 999999): 118, 
+                    datetime.datetime(2024, 8, 21, 23, 59, 59, 999999): 2, 
+                    datetime.datetime(2024, 8, 7, 23, 59, 59, 999999): 4, 
+                    datetime.datetime(2024, 6, 12, 23, 59, 59, 999999): 44
+                }
