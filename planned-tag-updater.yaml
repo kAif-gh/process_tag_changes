@@ -1,0 +1,544 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: tep
+    app.kubernetes.io/part-of: storm-data-platform
+    app.kubernetes.io/version: "0.0.1"
+    helm.sh/chart: tep-1.0.2
+    WBS: E.RDI.10959
+    costallocationcode: e.rdi.10959
+    costallocationtype: wbs
+    project: doggerbankdev
+    subproject: tep
+    app.kubernetes.io/component: tep-planned-tag-update
+  name: tep-planned-tag-update
+  namespace: tep
+data:
+  tep-sdpcli-kafka-config.json: |-
+    {
+      "consumer": {
+        "group.id": "{{ .Values.sdpcli.kafka.kafkaConfig.consumerGroup }}",
+        "auto.offset.reset": "earliest",
+        "enable.auto.commit": "false"
+      },
+      "producer": {
+         "acks": "1",
+         "linger.ms": "10",
+         "message.timeout.ms": "600000",
+         "queue.buffering.max.messages": "3000000",
+         "queue.buffering.max.ms": "5",
+         "compression.type": "gzip",
+         "retries": "5"
+      },
+      "kg_producer": {
+         "acks": "1",
+         "linger.ms": "10",
+         "message.timeout.ms": "600000",
+         "queue.buffering.max.messages": "3000000",
+         "queue.buffering.max.ms": "5",
+         "compression.type": "gzip",
+         "retries": "5"
+      }
+    }
+---
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: tep-planned-tag-update
+  labels:
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: tep
+    app.kubernetes.io/part-of: storm-data-platform
+    app.kubernetes.io/version: "0.0.1"
+    helm.sh/chart: tep-1.0.2
+    WBS: E.RDI.10959
+    costallocationcode: e.rdi.10959
+    costallocationtype: wbs
+    project: doggerbankdev
+    subproject: tep
+    app.kubernetes.io/component: tep-planned-tag-update
+    azure.workload.identity/use: "true"
+  namespace: tep
+spec:
+  entrypoint: tep-planned-tag-update
+  serviceAccountName: workflow-runner
+  workflowTemplateRef:
+    name: tep-planned-tag-update
+
+  arguments:
+    parameters:
+    - name: deployment-names
+      value: '["kafka-last-value-consumers", "kafka-tepid-resolver-consumers"]'
+    - name: namespace
+      value: tep
+    - name: replica-count
+      value: 1
+    - name: source
+      value: "scada"
+    - name: file_source
+      value: "{{ .Values.sdpcli.file_source }}"
+    - name: blob_file
+      value: "{{ .Values.sdpcli.blob_file }}"
+    - name: old_tag_col_name
+      value: "{{ .Values.sdpcli.old_tag_col_name }}"
+    - name: new_tag_col_name
+      value: "{{ .Values.sdpcli.new_tag_col_name }}"
+    - name: field_to_update
+      value: "{{ .Values.sdpcli.kafka.field_to_update }}"
+    - name: separator
+      value: "{{ .Values.sdpcli.separator }}"
+  
+  # Define parameters needed across tasks
+  templates:
+  - name: planned-tag-update-dag
+    dag:
+      tasks:
+        - name: count-rows-csv-changes
+          template: count-rows-csv-changes
+
+        - name: scale-down-deployments
+          template: scale-down-deployments
+          arguments:
+            parameters:
+              - name: deployment-names
+                value: "{{workflow.parameters.deployment-names}}"
+              - name: namespace
+                value: "{{workflow.parameters.namespace}}"
+          withItems: "{{workflow.parameters.deployment-names}}"
+
+        - name: backup-task
+          template: backup-template
+          arguments:
+            parameters:
+              - name: bucket_name
+                value: "SCADA_TEPID"
+              - name: store_path
+                value: "scada/redis_tag_backup/"
+              - name: source
+                value: "workflow.parameters.source"
+              - name: command
+                value: "backup"
+
+        - name: get-initial-tag-count
+          template: redis-tag-count
+          arguments:
+            parameters:
+              - name: redis-task
+                value: "initial"
+          outputs:
+            parameters:
+              - name: tag-count-before
+                valueFrom:
+                  path: /app/tmp/tag-count-before.txt
+
+        - name: get-final-tag-count
+          template: redis-tag-count
+          arguments:
+            parameters:
+              - name: redis-task
+                value: "final"
+          outputs:
+            parameters:
+              - name: tag-count-after
+                valueFrom:
+                  path: /app/tmp/tag-count-after.txt
+          
+        - name: redis-task
+          template: redis-template
+          arguments:
+            parameters:
+              - name: command
+                value: "file"
+          dependencies: [backup-task, scale-down-deployments]
+
+        - name: verify-tag-count-update
+          template: verify-tag-count-update
+          arguments:
+            parameters:
+              - name: process_type
+                value: "redis"
+          dependencies: [redis-task, get-initial-tag-count, get-final-tag-count]
+
+
+        - name: scale-up-deployments
+          template: scale-up-deployments
+          arguments:
+            parameters:
+              - name: deployment-names
+                value: "{{workflow.parameters.deployment-names}}"
+              - name: namespace
+                value: "{{workflow.parameters.namespace}}"
+              - name: replica-count
+                value: "{{workflow.parameters.replica-count}}"
+          withItems: "{{workflow.parameters.deployment-names}}"
+
+        - name: get-initial-tag-count-dgraph
+          template: dgraph-tag-count-dgraph
+          arguments:
+            parameters:
+              - name: dgraph-task
+                value: "initial"
+          outputs:
+            parameters:
+              - name: tag-count-before
+                valueFrom:
+                  path: /app/tmp/tag-count-dgraph-before.txt
+
+        - name: dgraph-task
+          template: dgraph-template
+          arguments:
+            parameters:
+              - name: command
+                value: "dgraph"
+          dependencies: [get-initial-tag-count-dgraph, scale-up-deployments]
+
+        - name: get-final-tag-count-dgraph
+          template: dgraph-tag-count-dgraph
+          arguments:
+            parameters:
+              - name: dgraph-task
+                value: "final"
+          outputs:
+            parameters:
+              - name: tag-count-after
+                valueFrom:
+                  path: /app/tmp/tag-count-dgraph-after.txt
+            dependencies: [dgraph-task, get-final-tag-count-dgraph]
+
+        - name: verify-tag-count-update
+          template: verify-tag-count-update
+          arguments:
+            parameters:
+              - name: process-type
+                value: "dgraph"
+          dependencies: [dgraph-task, get-initial-tag-count-dgraph, get-final-tag-count-dgraph]
+         
+        # probably depends on scaling down some deploy  
+        - name: kafka-task
+          template: kafka-template
+          arguments:
+            parameters:
+              - name: command
+                value: "kafka"
+          dependencies: [dgraph-task]
+
+  - name: count-rows-csv-changes
+    script:
+      image: busybox:latest
+      command: ["/bin/sh"]
+      source: |
+        #!/bin/sh
+        # Count the number of rows in the tag-changes file
+        row_count=$(wc -l < /app/config/planned-tagUpdate-changes.csv)
+        echo "$row_count" > /app/tmp/row_count.txt
+    volumeMounts:
+      - name: config
+        mountPath: /app/config
+      - name: tmp-volume
+        mountPath: /app/tmp
+
+  # scale down kafka-tepid-resolver-consumers deployment
+  - name: scale-down-deployments
+    inputs:
+      parameters:
+        - name: deployment-names
+        - name: namespace
+    container:
+      image: bitnami/kubectl:latest
+      command:
+        - /bin/sh
+        - -c
+      args:
+        - |
+          kubectl scale deployment {{ item }} --replicas=0 -n {{ inputs.parameters.namespace }}
+     
+
+  # Backup Task Template
+  - name: backup-template
+    inputs:
+      parameters:
+        - name: bucket_name
+        - name: store_path
+        - name: source
+        - name: command
+    container:
+      image: auroradevacr.azurecr.io/sdp/sdp-sdp-cli:v0.22.7-SNAPSHOT
+      imagePullPolicy: Always
+      command: ["./sdp-cli"]
+      args: [
+        "{{ inputs.parameters.source }}", "{{ inputs.parameters.command }}", 
+        "--bucket-name", "{{ inputs.parameters.bucket_name }}", 
+        "--dir-path", "{{ inputs.parameters.store_path }}"
+      ]
+      env:
+        - name: APP__REDIS__HASH_NAME
+          value: "{{ .Values.sdpcli.backup.redisConfig.hash_name}}"
+        - name: APP__REDIS__IS_TLS
+          value: "{{ .Values.sdpcli.backup.redisConfig.is_tls}}"
+        - name: RUST_LOG
+          value: "{{ .Values.sdpcli.trace.level }}"
+        - name: CARGO_PKG_NAME
+          value: "{{ include "sdpcli.backup.name" . }}"
+        - name: CARGO_PKG_VERSION
+          value: "{{ .Values.sdpcli.trace.version}}"
+        - name: OTEL_ACTIVE
+          value: "{{ .Values.sdpcli.trace.active}}"
+        - name: PROJECT
+          value: {{ .Values.tep.project.shortName }}
+        - name: ENV
+          value: {{ .Values.tep.env }}
+      envFrom:
+        - secretRef:
+            name: tep-redis-db-dev
+
+  # Redis tag count task template
+  - name: redis-tag-before-count
+    inputs:
+      parameters:
+        - name: redis-task
+    container:
+      image: redis:latest
+      command:
+        - /bin/sh
+        - -c
+      args:
+        - |
+          redis-cli -h $REDIS_HOST_NAME-p $REDIS_SSL_PORT -c "hlen SCADA_TEPID" > /app/tmp/tag_count.txt;
+          echo "Task: {{inputs.parameters.redis-task}} Redis tag count: $(cat /app/tmp/tag_count.txt)"
+      envFrom:
+        - secretRef:
+            name: tep-redis-db-dev
+      volumeMounts:
+        - name: config
+          mountPath: /app/config
+        - name: tmp-volume
+          mountPath: /app/tmp
+
+  # Redis Task Template
+  - name: redis-template
+    inputs:
+      parameters:
+        - name: command
+    container:
+      image: auroradevacr.azurecr.io/sdp/sdp-sdp-cli:v0.22.7-SNAPSHOT
+      imagePullPolicy: Always
+      command: ["./sdp-cli"]
+      args: [
+        "{{ workflow.parameters.source }}", "{{ inputs.parameters.command }}", 
+        "--csv-path", "/app/config/planned-tagUpdate-changes.csv", 
+        "--old-col-name", "{{ workflow.parameters.old_tag_col_name }}", 
+        "--new-col-name", "{{ workflow.parameters.new_tag_col_name }}", 
+        "--separator", "{{ workflow.parameters.separator }}"
+      ]
+      env:
+        - name: APP__REDIS__HASH_NAME
+          value: "{{ .Values.sdpcli.backup.redisConfig.hash_name}}"
+        - name: APP__REDIS__IS_TLS
+          value: "{{ .Values.sdpcli.backup.redisConfig.is_tls}}"
+        - name: RUST_LOG
+          value: "{{ .Values.sdpcli.trace.level }}"
+        - name: CARGO_PKG_NAME
+          value: "{{ include "sdpcli.backup.name" . }}"
+        - name: CARGO_PKG_VERSION
+          value: "{{ .Values.sdpcli.trace.version}}"
+        - name: OTEL_ACTIVE
+          value: "{{ .Values.sdpcli.trace.active}}"
+        - name: PROJECT
+          value: {{ .Values.tep.project.shortName }}
+        - name: ENV
+          value: {{ .Values.tep.env }}
+      envFrom:
+        - secretRef:
+            name: tep-redis-db-dev
+      volumeMounts:
+        - name: config
+          mountPath: /app/config
+
+  # Verification task
+  - name: verify-tag-count-update
+    script:
+      image: busybox:latest
+      volumeMounts:
+        - name: tmp-volume
+          mountPath: /app/tmp
+      command: ["/bin/sh"]
+      source: |
+        #!/bin/sh
+
+        # Read inputs
+        process_type="{{inputs.parameters.process_type}}"
+        tag_count_before=$(cat /app/tmp/tag_count_before.txt)
+        tag_count_after=$(cat /app/tmp/tag_count_after.txt)
+        tag_count_before-dgraph=$(cat /app/tmp/tag_count_before-dgraph.txt)
+        tag_count_after-dgraph=$(cat /app/tmp/tag_count_after-dgraph.txt)
+        
+        if [ "$process_type" = "redis" ]; then
+            row_count=$(cat /app/tmp/row_count.txt)
+
+            # Calculate expected tag count for Redis
+            expected_count=$((tag_count_before + row_count))
+
+            if [ "$tag_count_after" -eq "$expected_count" ]; then
+                echo "$process_type: Tag count verified for Redis: $tag_count_after equals expected count $expected_count"
+            else
+                echo "$process_type: Verification failed: $tag_count_after does not equal expected count $expected_count"
+                exit 1
+            fi
+
+        elif [ "$process_type" = "dgraph" ]; then
+            # For Dgraph, compare only tag_count_after-dgraph and tag_count_before-dgraph
+            if [ "$tag_count_after-dgraph" -eq "$tag_count_before-dgraph" ]; then
+                echo "$process_type: Tag count verified for Dgraph: $tag_count_after equals initial count $tag_count_before"
+            else
+                echo "$process_type: Verification failed: $tag_count_after does not equal initial count $tag_count_before"
+                exit 1
+            fi
+        else
+            echo "Unknown process type: $process_type"
+            exit 1
+        fi
+
+
+  # Scale up deployments
+  - name: scale-up-deployments
+      inputs:
+        parameters:
+          - name: deployment-names
+          - name: namespace
+          - name: replica-count
+      container:
+        image: bitnami/kubectl:latest
+        command:
+          - /bin/sh
+          - -c
+        args:
+          - |
+            kubectl scale deployment {{ item }} --replicas={{ inputs.parameters.replica-count }} -n {{ inputs.parameters.namespace }}
+
+  - name: get-initial-tag-count-dgraph
+    inputs:
+      parameters:
+        - name: dgraph-task
+
+
+  # Dgraph Task Template
+  - name: dgraph-template
+    inputs:
+      parameters:
+        - name: command
+    container:
+      image: auroradevacr.azurecr.io/sdp/sdp-sdp-cli:v0.22.7-SNAPSHOT
+      imagePullPolicy: Always
+      command: ["./sdp-cli"]
+      args: [
+        "{{ workflow.parameters.source }}", "{{ inputs.parameters.command }}", 
+        "--csv-path", "/app/config/planned-tagUpdate-changes.csv", 
+        "--old-col-name", "{{ workflow.parameters.old_tag_col_name }}", 
+        "--new-col-name", "{{ workflow.parameters.new_tag_col_name }}", 
+        "--separator", "{{ workflow.parameters.separator }}"
+      ]
+      env:
+        - name: GRAPHQL_URL
+          value: {{ include "graphql.url" . }}
+        - name: SCOPE
+          value: {{ include "graphql.audience.defaultScope" . }}
+        - name: RUST_LOG
+          value: "{{ .Values.sdpcli.trace.level }}"
+        - name: CARGO_PKG_NAME
+          value: "{{ include "sdpcli.dgraph.name" . }}"
+        - name: CARGO_PKG_VERSION
+          value: "{{ .Values.sdpcli.trace.version}}"
+        - name: OTEL_ACTIVE
+          value: "{{ .Values.sdpcli.trace.active}}"
+        - name: PROJECT
+          value: {{ .Values.tep.project.shortName }}
+        - name: ENV
+          value: {{ .Values.tep.env }}
+      envFrom:
+        - secretRef:
+            name: tep-redis-db-dev
+      volumeMounts:
+        - name: config
+          mountPath: /app/config
+        - name: tmp-volume
+          mountPath: /app/tmp
+
+    - name: get-final-tag-count-dgraph
+      inputs:
+        parameters:
+          - name: dgraph-task
+
+
+  # Kafka Task Template
+  - name: kafka-template
+    inputs:
+      parameters:
+        - name: command
+    container:
+      image: auroradevacr.azurecr.io/sdp/sdp-sdp-cli:v0.22.7-SNAPSHOT
+      imagePullPolicy: Always
+      command: ["./sdp-cli"]
+      args: [
+        "{{ workflow.parameters.source }}", "{{ inputs.parameters.command }}", 
+        "--csv-path", "/app/config/planned-tagUpdate-changes.csv", 
+        "--old-col-name", "{{ workflow.parameters.old_tag_col_name }}", 
+        "--new-col-name", "{{ workflow.parameters.new_tag_col_name }}", "{{ workflow.parameters.field_to_update }}"
+        "--separator", "{{ workflow.parameters.separator }}"
+      ]
+      env:
+        - name: APP_CONFIG_FILE_PATH
+          value: "/app/config/tep-sdpcli-kafka-config.json"
+        - name: APP__KAFKA__TOPIC
+          value: "{{ .Values.sdpcli.kafka.kafkaConfig.consumer_topic}}"
+        - name: APP__KAFKA__SCHEMA_REGISTRY_URL
+          value: "{{ .Values.sdpcli.kafka.kafkaConfig.schema_registry_url}}"
+        - name: APP__KAFKA__SCHEMA_SUBJECT
+          value: "{{ .Values.sdpcli.kafka.kafkaConfig.subject}}"
+        - name: APP__REDIS__HASH_NAME
+          value: "{{ .Values.sdpcli.backup.redisConfig.hash_name}}"
+        - name: APP__REDIS__IS_TLS
+          value: "{{ .Values.sdpcli.backup.redisConfig.is_tls}}"
+        - name: RUST_LOG
+          value: "{{ .Values.sdpcli.trace.level }}"  
+        - name: CARGO_PKG_NAME
+          value: "{{ include "sdpcli.kafka.name" . }}"
+        - name: CARGO_PKG_VERSION
+          value: "{{ .Values.sdpcli.trace.version}}"
+        - name: OTEL_ACTIVE
+          value: "{{ .Values.sdpcli.trace.active}}"
+        - name: PROJECT
+          value: {{ .Values.tep.project.shortName }}
+        - name: ENV
+          value: {{ .Values.tep.env }}
+      envFrom:
+        - secretRef:
+            name: tep-kafka-tls-connection-values-internal-doggerbankdev
+        - secretRef:
+            name: tep-redis-db-dev
+      volumeMounts:
+        - name: config
+          mountPath: /app/config
+
+  # ConfigMap to Share Across Tasks
+  - name: config-template
+    configMapRef:
+      name: tag-changes-configmap
+
+  volumes:
+    - name: config
+      configMap:
+        name: tag-changes-configmap
+        items:
+          - key: tep-sdpcli-kafka-config.json
+            path: tep-sdpcli-kafka-config.json
+          - key: planned-tagUpdate-changes.csv
+            path: planned-tagUpdate-changes.csv
+    - name: tmp-volume
+      emptyDir:
+        medium: Memory
+        sizeLimit: 2Gi
