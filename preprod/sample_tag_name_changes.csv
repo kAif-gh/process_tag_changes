@@ -1,0 +1,3 @@
+OldTagName,NewTagName
+DBA.OCS.OFTO.CableMonitoringSystem.HVDCGISCellarHighTemperatureAlarm.Alm.stVal,DBA.OCS.OFTO.CableMonitoringSystem.HVDCGIScellarHighTemperatureAlarm.Alm.stVal
+DBA.OCS.OFTO.CableMonitoringSystem.HVDCGISCellarHighTemperatureWarning.Wrn.stVal,DBA.OCS.OFTO.CableMonitoringSystem.HVDCGIScellarHighTemperatureWarning.Wrn.stVal
