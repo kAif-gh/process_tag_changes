@@ -51,8 +51,6 @@ spec:
         value: "2024-02-29"
       - name: end-date
         value: "2024-03-01"
-      - name: table-name
-        value: "scada_signal"
       - name: days-to-process
         value: "1"
   templates:
@@ -70,8 +68,6 @@ spec:
                 value: "{{item.start_date}}"
               - name: endDate
                 value: "{{item.end_date}}"
-              - name: tableName
-                value: "{{item.table_name}}"
     - name: gen-months-python
       script:
         image: auroradevacr.azurecr.io/tep/pandas:3.11.3
@@ -93,7 +89,6 @@ spec:
         parameters:
           - name: startDate
           - name: endDate
-          - name: tableName
       resource:
         action: create
         failureCondition: status.applicationState.state == FAILED
@@ -150,6 +145,8 @@ spec:
               env:
                 - name: APPNAME
                   value: delta-tepid-processor
+                - name: KAFKAPROPS_MAX_OFFSETS_PER_TRIGGER
+                  value: "1000"
                 - name: DELTA_READ_STREAMING
                   value: "false"
                 - name: DELTA_DATA_TYPE
@@ -158,14 +155,20 @@ spec:
                   value: "abfss://enterprise@dlstepdbdev.dfs.core.windows.net/scada/scada_signal"
                 - name: DELTA_OUT
                   value: "abfss://enterprise@dlstepdbdev.dfs.core.windows.net/scada/scada_signal"
+                - name: DELTA_CHECKPOINT_LOCATION
+                  value: "abfss://enterprise@dlstepdbdev.dfs.core.windows.net/chkpts/scada/scada_signal"
+                - name: DELTA_TRIGGER_INTERVAL
+                  value: "5 minutes"
                 - name: START_DATE
                   value: "{{inputs.parameters.startDate}}"
                 - name: END_DATE
                   value: "{{inputs.parameters.endDate}}"
                 - name: TABLE_NAME
-                  value: "{{inputs.parameters.tableName}}"
+                  value: "scada_signal"
                 - name: DELTA_COMPRESSION_TYPE
                   value: "zstd"
+                - name: AZURE_SCOPES
+                  value: "api://8884d831-f8ef-41f3-b4d5-2d655d93b867/.default"
                 - name: FILE_PATH
                   value: "/opt/spark/config/tep_id_mapping_sample.csv"  # Reference to the ConfigMap file location
               envFrom:
