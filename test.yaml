@@ -214,3 +214,27 @@ spec:
               - name: tep-id-mapping-vol
                 configMap:
                   name: tep-id-mapping-cm
+
+              javaOptions: -Duser.timezone=UTC
+              labels:
+                WBS: E.RDI.10959
+                app.kubernetes.io/instance: release-name
+                app.kubernetes.io/managed-by: Helm
+                app.kubernetes.io/name: tep
+                app.kubernetes.io/part-of: storm-data-platform
+                app.kubernetes.io/version: 0.0.1
+                azure.workload.identity/use: "true"
+                costallocationcode: e.rdi.10959
+                costallocationtype: wbs
+                helm.sh/chart: tep-1.0.2
+                project: doggerbankdev
+                subproject: tep
+                version: 3.5.0
+              nodeSelector:
+                node-restriction.aurora.equinor.com/purpose: spark-executors
+              serviceAccount: spark-dgraph-reader
+              tolerations:
+                - key: SparkExecutorsOnly
+                  operator: Equal
+                  value: "true"
+                  effect: NoSchedule
