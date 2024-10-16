@@ -24,7 +24,14 @@
             </Attribute>
           </value>
         </entry>
-        <entry key="/prod/right/tag_name_changes_batch2to6.csv">
+        <entry key="/prod/right/tag_name_changes_batch_2to6.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/prod/right/tag_name_changes_batch_7to107.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
@@ -52,6 +59,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/prod/right/tep_id_changes_spk.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/prod/right/time_of_newTag_cleaned_final.csv">
           <value>
             <Attribute>
@@ -60,13 +74,6 @@
           </value>
         </entry>
         <entry key="/strip_test.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/test.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />

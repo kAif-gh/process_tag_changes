@@ -1,49 +1,39 @@
+{{- if .Values.sparkJobs.tepIdInjector -}}
 ---
-# ConfigMap for TEP ID Mapping CSV
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: tep-id-mapping-cm
-  namespace: tep
+  labels:
+    {{- include "sdpcli.kafka.labels" . | nindent 4 }}
+  name: {{ include "sdpcli.kafka.name" . }}
+  namespace: {{ include "namespace" . }}
 data:
-  tep_id_mapping_sample.csv: |
+  {{ include "sparkJobs.tepIdInjector.tepIdChangesFileName" . }}: |-
     sourceTepId,targetTepId
     1b3639fd-3f2b-4cfa-9ac0-68e3590b16e9,1b3639fd-3f2b-4cfa-9ac0-68e3590b9999
-
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata:
-  name: spk-delta-tepid-injector-wf
-  namespace: tep
   labels:
-    app.kubernetes.io/instance: release-name
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: tep
-    app.kubernetes.io/part-of: storm-data-platform
-    app.kubernetes.io/version: "0.0.1"
-    helm.sh/chart: tep-1.0.2
-    WBS: E.RDI.10959
-    costallocationcode: e.rdi.10959
-    costallocationtype: wbs
-    project: doggerbankdev
-    subproject: tep
-    version: 3.5.0
+    {{- include "spark.application.labels" . | nindent 4 }}
+  name: spk-delta-tepid-injector-wf
+  namespace: {{ include "namespace" . }}
 spec:
   entrypoint: spk-delta-tepid-injector
   podGC:
     strategy: OnWorkflowSuccess
-  serviceAccountName: workflow-runner
+  serviceAccountName: {{ include "argo.workflows.serviceAccount.name" . }}
   arguments:
     parameters:
       - name: num-cores
-        value: "1"
+        value: "{{ .Values.sparkJobs.tepIdInjector.executor.cores }}"
       - name: memory
-        value: "8G"
+        value: "{{ .Values.sparkJobs.tepIdInjector.executor.memory }}"
       - name: instances
-        value: "4"
+        value: "{{ .Values.sparkJobs.tepIdInjector.executor.instances }}"
       - name: num-cores-limits
-        value: "1"
+        value: "{{ .Values.sparkJobs.tepIdInjector.executor.coreLimit }}"
       - name: date-list
         value: |
           2024-06-12
@@ -59,16 +49,16 @@ spec:
             template: gen-intervals-python
         - - name: spk-delta-tepid-injector
             template: spk-delta-tepid
-            withParam: "{{steps.generate-intervals.outputs.result}}"
+        withParam: "{{`{{steps.generate-intervals.outputs.result}}`}}"
             arguments:
               parameters:
               - name: startDate
-                value: "{{item.start_date}}"
+                value: "{{`{{item.start_date}}`}}"
               - name: endDate
-                value: "{{item.end_date}}"
+                value: "{{`{{item.end_date}}`}}"
     - name: gen-intervals-python
       script:
-        image: auroradevacr.azurecr.io/tep/pandas:3.11.3
+        image: {{ .Values.sparkJobs.tepIdInjector.genImage }}
         command: [python]
         source: |
           import pandas as pd
@@ -76,11 +66,11 @@ spec:
 
           input_dates = """{{workflow.parameters.date-list}}""".splitlines()
           date_list = [pd.to_datetime(date.strip()) for date in input_dates]
-          
+
           # check for duplicates
           if len(date_list) != len(set(date_list)):
               raise ValueError("Duplicate dates found in the input list.")
-          
+
           intervals = []
           start_date = date_list[0]
           end_date = date_list[0]
@@ -117,18 +107,8 @@ spec:
             name: delta-tepid-{{inputs.parameters.endDate}}-processor
             namespace: tep
             labels:
-              app.kubernetes.io/instance: release-name
-              app.kubernetes.io/managed-by: Helm
-              app.kubernetes.io/name: tep
-              app.kubernetes.io/part-of: storm-data-platform
-              app.kubernetes.io/version: "0.0.1"
-              helm.sh/chart: tep-1.0.2
-              WBS: E.RDI.10959
-              costallocationcode: e.rdi.10959
-              costallocationtype: wbs
-              project: doggerbankdev
-              subproject: tep
-              version: 3.5.0
+              {{- include "spark.application.labels" . | nindent 12 }}
+            namespace: {{ include "namespace" . }}
           spec:
             type: Scala
             mode: cluster
@@ -167,41 +147,27 @@ spec:
                 - name: DELTA_DATA_TYPE
                   value: SCADA
                 - name: DELTA_PATH
-                  value: "abfss://enterprise@dlstepdbdev.dfs.core.windows.net/scada/scada_signal"
+                  value: "abfss://enterprise@dlstepdbdev.dfs.core.windows.net/scada/{{ .Values.sparkJobs.tepIdInjector.tableName }}"
                 - name: DELTA_OUT
-                  value: "abfss://enterprise@dlstepdbdev.dfs.core.windows.net/scada/scada_signal"
+                  value: "abfss://enterprise@dlstepdbdev.dfs.core.windows.net/scada/{{ .Values.sparkJobs.tepIdInjector.tableName }}"
                 - name: START_DATE
                   value: "{{inputs.parameters.startDate}}"
                 - name: END_DATE
                   value: "{{inputs.parameters.endDate}}"
                 - name: TABLE_NAME
-                  value: "scada_signal"
+                  value: "{{ .Values.sparkJobs.tepIdInjector.tableName }}"
                 - name: DELTA_COMPRESSION_TYPE
                   value: "zstd"
                 - name: FILE_PATH
                   value: "/opt/spark/config/tep_id_mapping_sample.csv"  # Reference to the ConfigMap file location
               envFrom:
                 - secretRef:
-                    name: tep-kafka-tls-connection-values-internal-doggerbankdev
+                    name: {{ include "kafka.kubernetesSecret.internal.name" . }}
                 - secretRef:
-                    name: tep-redis-db-dev
+                    name: {{ include "storageAccount.dataLakeStorage.azureKeyVaultSecret.name" . }}
                 - secretRef:
-                    name: storageaccount-dlstepdbdev
-              javaOptions: -Duser.timezone=UTC
-              labels:
-                WBS: E.RDI.10959
-                app.kubernetes.io/instance: release-name
-                app.kubernetes.io/managed-by: Helm
-                app.kubernetes.io/name: tep
-                app.kubernetes.io/part-of: storm-data-platform
-                app.kubernetes.io/version: 0.0.1
-                azure.workload.identity/use: "true"
-                costallocationcode: e.rdi.10959
-                costallocationtype: wbs
-                helm.sh/chart: tep-1.0.2
-                project: doggerbankdev
-                subproject: tep
-                version: 3.5.0
+                    name: {{ include "redis.name" . }}
+              {{- include "spark.application.spec.driver" . | nindent 12 }}
               nodeSelector:
                 node-restriction.aurora.equinor.com/purpose: spark
               serviceAccount: spark-dgraph-reader

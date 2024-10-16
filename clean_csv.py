@@ -41,6 +41,17 @@ def strip_csv2(input_file, column_names, output_file):
     df.to_csv(output_file, index=False)
     print(f"\nData cleaned and saved to {output_file}")
 
+
+def swap_and_prepare_csv_for_spk(csv_file_path, output_file_path):
+    df = pd.read_csv(csv_file_path)
+    df = df[['new tep_id', 'old tep_id']]
+    df.columns = ['sourceTepId', 'targetTepId']
+    df.to_csv(output_file_path, index=False)
+    print(f"CSV has been processed and saved to {output_file_path}")
+
+
+# swap_and_prepare_csv_for_spk("./prod/right/tep_id_changes.csv", "./prod/right/tep_id_changes_spk.csv")
+
 # csv_file = "./prod/right/tag_name_changes.csv"
 # df = pd.read_csv(csv_file)
 
@@ -56,3 +67,5 @@ def strip_csv2(input_file, column_names, output_file):
 
 # merged_df = merge_csv_files('./RAW-data/tag_name_changes1Cleaned.csv', './RAW-data/tag_name_changes2Cleaned.csv',
 # columns=["Dgraph Name"]) merged_df.to_csv('./RAW-data/tag_name_changes_final.csv', index=False)
+
+

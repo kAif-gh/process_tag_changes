@@ -1,0 +1,102 @@
+OldTagName,NewTagName
+DBA.OCS.OFTO.NonePhaseRelatedMeasurement.VolAmpr.mag,DBA.OCS.OFTO.HVAC.ACSwitchYard.NonePhaseRelatedMeasurement.VolAmpr.mag
+DBA.OCS.OFTO.NonePhaseRelatedMeasurement.Watt.mag,DBA.OCS.OFTO.HVAC.ACSwitchYard.NonePhaseRelatedMeasurement.Watt.mag
+DBA.OCS.OFTO.Power_Direction_Station1_To_2.Ind.stVal,DBA.OCS.OFTO.HVAC.ACSwitchYard.Power_Direction_Station1_To_2.Ind.stVal
+DBA.OCS.OFTO.Power_Direction_Station2_To_1.Ind.stVal,DBA.OCS.OFTO.HVAC.ACSwitchYard.Power_Direction_Station2_To_1.Ind.stVal
+DBA.OCS.OFTO.VoltageNegative.Vol.mag,DBA.OCS.OFTO.HVAC.ACSwitchYard.VoltageNegative.Vol.mag
+DBA.OCS.OFTO.VoltagePositive.Vol.mag,DBA.OCS.OFTO.HVAC.ACSwitchYard.VoltagePositive.Vol.mag
+DBA.OCS.OFTO.X111A.Pos.stVal,DBA.OCS.OFTO.HVAC.ACSwitchYard.X111A.Ind.stVal
+DBA.OCS.OFTO.X111B.Pos.stVal,DBA.OCS.OFTO.HVAC.ACSwitchYard.X111B.Ind.stVal
+DBA.OCS.OFTO.X115DCB.Pos.stVal,DBA.OCS.OFTO.HVAC.ACSwitchYard.X115DCB.Ind.stVal
+DBA.OCS.OFTO.X151.Pos.stVal,DBA.OCS.OFTO.HVAC.ACSwitchYard.X151.Ind.stVal
+DBA.OCS.OFTO.X153.Pos.stVal,DBA.OCS.OFTO.HVAC.ACSwitchYard.X153.Ind.stVal
+DBA.OCS.OFTO.X101.Pos.stVal,DBA.OCS.OFTO.HVAC.ReactorArea.X101.Ind.stVal
+DBA.OCS.OFTO.X201.Pos.stVal,DBA.OCS.OFTO.HVAC.ReactorArea.X201.Ind.stVal
+DBA.OCS.OFTO.D105_SF6_PRESSURE.PresSv.instMag,DBA.OCS.OFTO.HVAC.SF6Breakers.D105_SF6_PRESSURE.PresSv.instMag
+DBA.OCS.OFTO.D205_SF6_PRESSURE.PresSv.instMag,DBA.OCS.OFTO.HVAC.SF6Breakers.D205_SF6_PRESSURE.PresSv.instMag
+DBA.OCS.OFTO.WA1_XE2_XB1_SF6_PRESSURE.PresSv.instMag,DBA.OCS.OFTO.HVAC.SF6Breakers.WA1_XE2_XB1_SF6_PRESSURE.PresSv.instMag
+DBA.OCS.OFTO.WA2_XE2_XB1_SF6_PRESSURE.PresSv.instMag,DBA.OCS.OFTO.HVAC.SF6Breakers.WA2_XE2_XB1_SF6_PRESSURE.PresSv.instMag
+DBA.OCS.OFTO.X110_L1_SF6_PRESSURE.PresSv.instMag,DBA.OCS.OFTO.HVAC.SF6Breakers.X110_L1_SF6_PRESSURE.PresSv.instMag
+DBA.OCS.OFTO.X110_L2_SF6_PRESSURE.PresSv.instMag,DBA.OCS.OFTO.HVAC.SF6Breakers.X110_L2_SF6_PRESSURE.PresSv.instMag
+DBA.OCS.OFTO.X110_L3_SF6_PRESSURE.PresSv.instMag,DBA.OCS.OFTO.HVAC.SF6Breakers.X110_L3_SF6_PRESSURE.PresSv.instMag
+DBA.OCS.OFTO.X115DCB_L1_SF6_PRESSURE.PresSv.instMag,DBA.OCS.OFTO.HVAC.SF6Breakers.X115DCB_L1_SF6_PRESSURE.PresSv.instMag
+DBA.OCS.OFTO.X115DCB_L2_SF6_PRESSURE.PresSv.instMag,DBA.OCS.OFTO.HVAC.SF6Breakers.X115DCB_L2_SF6_PRESSURE.PresSv.instMag
+DBA.OCS.OFTO.X115DCB_L3_SF6_PRESSURE.PresSv.instMag,DBA.OCS.OFTO.HVAC.SF6Breakers.X115DCB_L3_SF6_PRESSURE.PresSv.instMag
+DBA.OCS.OFTO.HVDC.AuxiliaryComputer.1A1.T2AXC1A1_ActiveState.Ind.stVal,DBA.OCS.OFTO.HVDC.AuxiliaryComputer.1A1.T2AXC1A1_Activestate.Ind.stVal
+DBA.OCS.OFTO.T2AXC1A1_ActiveState.Ind.stVal,DBA.OCS.OFTO.HVDC.AuxiliaryComputer.1A1.T2AXC1A1_Activestate.Ind.stVal
+DBA.OCS.OFTO.HVDC.AuxiliaryComputer.1A1.T2AXC1A1_EmergencyFault.Alm.stVal,DBA.OCS.OFTO.HVDC.AuxiliaryComputer.1A1.T2AXC1A1_Emergencyfault.Alm.stVal
+DBA.OCS.OFTO.T2AXC1A1_EmergencyFault.Alm.stVal,DBA.OCS.OFTO.HVDC.AuxiliaryComputer.1A1.T2AXC1A1_Emergencyfault.Alm.stVal
+DBA.OCS.OFTO.HVDC.AuxiliaryComputer.1A1.T2AXC1A1_MinorFault.Ind.stVal,DBA.OCS.OFTO.HVDC.AuxiliaryComputer.1A1.T2AXC1A1_Minorfault.Ind.stVal
+DBA.OCS.OFTO.T2AXC1A1_MinorFault.Ind.stVal,DBA.OCS.OFTO.HVDC.AuxiliaryComputer.1A1.T2AXC1A1_Minorfault.Ind.stVal
+DBA.OCS.OFTO.HVDC.AuxiliaryComputer.1A1.T2AXC1A1_OffState.Ind.stVal,DBA.OCS.OFTO.HVDC.AuxiliaryComputer.1A1.T2AXC1A1_Offstate.Ind.stVal
+DBA.OCS.OFTO.T2AXC1A1_OffState.Ind.stVal,DBA.OCS.OFTO.HVDC.AuxiliaryComputer.1A1.T2AXC1A1_Offstate.Ind.stVal
+DBA.OCS.OFTO.HVDC.AuxiliaryComputer.1A1.T2AXC1A1_SevereFault.Wrn.stVal,DBA.OCS.OFTO.HVDC.AuxiliaryComputer.1A1.T2AXC1A1_Severefault.Wrn.stVal
+DBA.OCS.OFTO.T2AXC1A1_SevereFault.Wrn.stVal,DBA.OCS.OFTO.HVDC.AuxiliaryComputer.1A1.T2AXC1A1_Severefault.Wrn.stVal
+DBA.OCS.OFTO.T2AXC1A1_StandbyState.Ind.stVal,DBA.OCS.OFTO.HVDC.AuxiliaryComputer.1A1.T2AXC1A1_StandbyState.Ind.stVal
+DBA.OCS.OFTO.T2AXC1A1_Temperature.TmpSv.instMag,DBA.OCS.OFTO.HVDC.AuxiliaryComputer.1A1.T2AXC1A1_Temperature.TmpSv.instMag
+DBA.OCS.OFTO.HVDC.AuxiliaryComputer.1B1.T2AXC1B1_ActiveState.Ind.stVal,DBA.OCS.OFTO.HVDC.AuxiliaryComputer.1B1.T2AXC1B1_Activestate.Ind.stVal
+DBA.OCS.OFTO.T2AXC1B1_ActiveState.Ind.stVal,DBA.OCS.OFTO.HVDC.AuxiliaryComputer.1B1.T2AXC1B1_Activestate.Ind.stVal
+DBA.OCS.OFTO.HVDC.AuxiliaryComputer.1B1.T2AXC1B1_EmergencyFault.Alm.stVal,DBA.OCS.OFTO.HVDC.AuxiliaryComputer.1B1.T2AXC1B1_Emergencyfault.Alm.stVal
+DBA.OCS.OFTO.T2AXC1B1_EmergencyFault.Alm.stVal,DBA.OCS.OFTO.HVDC.AuxiliaryComputer.1B1.T2AXC1B1_Emergencyfault.Alm.stVal
+DBA.OCS.OFTO.HVDC.AuxiliaryComputer.1B1.T2AXC1B1_MinorFault.Ind.stVal,DBA.OCS.OFTO.HVDC.AuxiliaryComputer.1B1.T2AXC1B1_Minorfault.Ind.stVal
+DBA.OCS.OFTO.T2AXC1B1_MinorFault.Ind.stVal,DBA.OCS.OFTO.HVDC.AuxiliaryComputer.1B1.T2AXC1B1_Minorfault.Ind.stVal
+DBA.OCS.OFTO.HVDC.AuxiliaryComputer.1B1.T2AXC1B1_OffState.Ind.stVal,DBA.OCS.OFTO.HVDC.AuxiliaryComputer.1B1.T2AXC1B1_Offstate.Ind.stVal
+DBA.OCS.OFTO.T2AXC1B1_OffState.Ind.stVal,DBA.OCS.OFTO.HVDC.AuxiliaryComputer.1B1.T2AXC1B1_Offstate.Ind.stVal
+DBA.OCS.OFTO.HVDC.AuxiliaryComputer.1B1.T2AXC1B1_SevereFault.Wrn.stVal,DBA.OCS.OFTO.HVDC.AuxiliaryComputer.1B1.T2AXC1B1_Severefault.Wrn.stVal
+DBA.OCS.OFTO.T2AXC1B1_SevereFault.Wrn.stVal,DBA.OCS.OFTO.HVDC.AuxiliaryComputer.1B1.T2AXC1B1_Severefault.Wrn.stVal
+DBA.OCS.OFTO.T2AXC1B1_StandbyState.Ind.stVal,DBA.OCS.OFTO.HVDC.AuxiliaryComputer.1B1.T2AXC1B1_StandbyState.Ind.stVal
+DBA.OCS.OFTO.T2AXC1B1_Temperature.TmpSv.instMag,DBA.OCS.OFTO.HVDC.AuxiliaryComputer.1B1.T2AXC1B1_Temperature.TmpSv.instMag
+DBA.OCS.OFTO.HVDC.Auxiliary Power System.Trafo.C-82ET529A_AuxTrafoWindingtemp.TmpSv.instMag,DBA.OCS.OFTO.HVDC.AuxiliarySystem.AuxiliaryTransformer.C-82ET529A_AuxTrafoWindingtemp.TmpSv.instMag
+DBA.OCS.OFTO.HVDC.Auxiliary Power System.Trafo.C-82ET529B_AuxTrafoWindingtemp.TmpSv.instMag,DBA.OCS.OFTO.HVDC.AuxiliarySystem.AuxiliaryTransformer.C-82ET529B_AuxTrafoWindingtemp.TmpSv.instMag
+DBA.OCS.OFTO.HVDC.Auxiliary Power System.LVS.C-82EL501A-UC1_ActivePower.Watt.mag,DBA.OCS.OFTO.HVDC.AuxiliarySystem.LVS.C-82EL501A-UC1_ActivePower.Watt.mag
+DBA.OCS.OFTO.HVDC.Auxiliary Power System.LVS.C-82EL501A-UC1_QA1BreakerStatus.Pos.stVal,DBA.OCS.OFTO.HVDC.AuxiliarySystem.LVS.C-82EL501A-UC1_QA1BreakerStatus.Ind.stVal
+DBA.OCS.OFTO.HVDC.Auxiliary Power System.LVS.C-82EL501A.A.phsA.cVal.mag,DBA.OCS.OFTO.HVDC.AuxiliarySystem.LVS.C-82EL501A.A.phsA.cVal.mag
+DBA.OCS.OFTO.HVDC.Auxiliary Power System.LVS.C-82EL501A.A.phsB.cVal.mag,DBA.OCS.OFTO.HVDC.AuxiliarySystem.LVS.C-82EL501A.A.phsB.cVal.mag
+DBA.OCS.OFTO.HVDC.Auxiliary Power System.LVS.C-82EL501A.A.phsC.cVal.mag,DBA.OCS.OFTO.HVDC.AuxiliarySystem.LVS.C-82EL501A.A.phsC.cVal.mag
+DBA.OCS.OFTO.HVDC.Auxiliary Power System.LVS.C-82EL501A.PPV.phsAB.cVal.mag,DBA.OCS.OFTO.HVDC.AuxiliarySystem.LVS.C-82EL501A.PPV.phsAB.cVal.mag
+DBA.OCS.OFTO.HVDC.Auxiliary Power System.LVS.C-82EL501A.PPV.phsBC.cVal.mag,DBA.OCS.OFTO.HVDC.AuxiliarySystem.LVS.C-82EL501A.PPV.phsBC.cVal.mag
+DBA.OCS.OFTO.HVDC.Auxiliary Power System.LVS.C-82EL501A.PPV.phsCA.cVal.mag,DBA.OCS.OFTO.HVDC.AuxiliarySystem.LVS.C-82EL501A.PPV.phsCA.cVal.mag
+DBA.OCS.OFTO.HVDC.Auxiliary Power System.LVS.C-82EL501B-UC2_ActivePower.Watt.mag,DBA.OCS.OFTO.HVDC.AuxiliarySystem.LVS.C-82EL501B-UC2_ActivePower.Watt.mag
+DBA.OCS.OFTO.HVDC.Auxiliary Power System.LVS.C-82EL501B-UC2_QA1BreakerStatus.Pos.stVal,DBA.OCS.OFTO.HVDC.AuxiliarySystem.LVS.C-82EL501B-UC2_QA1BreakerStatus.Ind.stVal
+DBA.OCS.OFTO.HVDC.Auxiliary Power System.LVS.C-82EL501B.A.phsA.cVal.mag,DBA.OCS.OFTO.HVDC.AuxiliarySystem.LVS.C-82EL501B.A.phsA.cVal.mag
+DBA.OCS.OFTO.HVDC.Auxiliary Power System.LVS.C-82EL501B.A.phsB.cVal.mag,DBA.OCS.OFTO.HVDC.AuxiliarySystem.LVS.C-82EL501B.A.phsB.cVal.mag
+DBA.OCS.OFTO.HVDC.Auxiliary Power System.LVS.C-82EL501B.A.phsC.cVal.mag,DBA.OCS.OFTO.HVDC.AuxiliarySystem.LVS.C-82EL501B.A.phsC.cVal.mag
+DBA.OCS.OFTO.HVDC.Auxiliary Power System.LVS.C-82EL501B.PPV.phsAB.cVal.mag,DBA.OCS.OFTO.HVDC.AuxiliarySystem.LVS.C-82EL501B.PPV.phsAB.cVal.mag
+DBA.OCS.OFTO.HVDC.Auxiliary Power System.LVS.C-82EL501B.PPV.phsBC.cVal.mag,DBA.OCS.OFTO.HVDC.AuxiliarySystem.LVS.C-82EL501B.PPV.phsBC.cVal.mag
+DBA.OCS.OFTO.HVDC.Auxiliary Power System.LVS.C-82EL501B.PPV.phsCA.cVal.mag,DBA.OCS.OFTO.HVDC.AuxiliarySystem.LVS.C-82EL501B.PPV.phsCA.cVal.mag
+DBA.OCS.OFTO.HVDC.Auxiliary Power System.HVS.C-80EH501-UC03_ActivePower.Watt.mag,DBA.OCS.OFTO.HVDC.AuxiliarySystem.MVS.C-80EH501-UC03_ActivePower.Watt.mag
+DBA.OCS.OFTO.HVDC.Auxiliary Power System.HVS.C-80EH501.A.phsA.cVal.mag,DBA.OCS.OFTO.HVDC.AuxiliarySystem.MVS.C-80EH501.A.phsA.cVal.mag
+DBA.OCS.OFTO.HVDC.Auxiliary Power System.HVS.C-80EH501.A.phsB.cVal.mag,DBA.OCS.OFTO.HVDC.AuxiliarySystem.MVS.C-80EH501.A.phsB.cVal.mag
+DBA.OCS.OFTO.HVDC.Auxiliary Power System.HVS.C-80EH501.A.phsC.cVal.mag,DBA.OCS.OFTO.HVDC.AuxiliarySystem.MVS.C-80EH501.A.phsC.cVal.mag
+DBA.OCS.OFTO.HVDC.Auxiliary Power System.HVS.C-80EH501.PPV.phsAB.cVal.mag,DBA.OCS.OFTO.HVDC.AuxiliarySystem.MVS.C-80EH501.PPV.phsAB.cVal.mag
+DBA.OCS.OFTO.HVDC.Auxiliary Power System.HVS.C-80EH501.PPV.phsBC.cVal.mag,DBA.OCS.OFTO.HVDC.AuxiliarySystem.MVS.C-80EH501.PPV.phsBC.cVal.mag
+DBA.OCS.OFTO.HVDC.Auxiliary Power System.HVS.C-80EH501.PPV.phsCA.cVal.mag,DBA.OCS.OFTO.HVDC.AuxiliarySystem.MVS.C-80EH501.PPV.phsCA.cVal.mag
+DBA.OCS.OFTO.HVDC.Auxiliary Power System.MVS.C-80EM501-UC03_ActivePower.Watt.mag,DBA.OCS.OFTO.HVDC.AuxiliarySystem.MVS.C-80EM501-UC03_ActivePower.Watt.mag
+DBA.OCS.OFTO.HVDC.Auxiliary Power System.MVS.C-80EM501.A.phsA.cVal.mag,DBA.OCS.OFTO.HVDC.AuxiliarySystem.MVS.C-80EM501.A.phsA.cVal.mag
+DBA.OCS.OFTO.HVDC.Auxiliary Power System.MVS.C-80EM501.A.phsB.cVal.mag,DBA.OCS.OFTO.HVDC.AuxiliarySystem.MVS.C-80EM501.A.phsB.cVal.mag
+DBA.OCS.OFTO.HVDC.Auxiliary Power System.MVS.C-80EM501.A.phsC.cVal.mag,DBA.OCS.OFTO.HVDC.AuxiliarySystem.MVS.C-80EM501.A.phsC.cVal.mag
+DBA.OCS.OFTO.HVDC.Auxiliary Power System.MVS.C-80EM501.PPV.phsAB.cVal.mag,DBA.OCS.OFTO.HVDC.AuxiliarySystem.MVS.C-80EM501.PPV.phsAB.cVal.mag
+DBA.OCS.OFTO.HVDC.Auxiliary Power System.MVS.C-80EM501.PPV.phsBC.cVal.mag,DBA.OCS.OFTO.HVDC.AuxiliarySystem.MVS.C-80EM501.PPV.phsBC.cVal.mag
+DBA.OCS.OFTO.HVDC.Auxiliary Power System.MVS.C-80EM501.PPV.phsCA.cVal.mag,DBA.OCS.OFTO.HVDC.AuxiliarySystem.MVS.C-80EM501.PPV.phsCA.cVal.mag
+DBA.OCS.OFTO.TrafoAux.AgeRte.mag,DBA.OCS.OFTO.HVDC.AuxiliarySystem.TransformerAging.TrafoAux.AgeRte.mag
+DBA.OCS.OFTO.TrafoAux.HPTmpClc.mag,DBA.OCS.OFTO.HVDC.AuxiliarySystem.TransformerAging.TrafoAux.HPTmpClc.mag
+DBA.OCS.OFTO.TrafoAuxWindingAgingFactor.HaTdFact.mag,DBA.OCS.OFTO.HVDC.AuxiliarySystem.TransformerAging.TrafoAuxWindingAgingFactor.HaTdFact.mag
+DBA.OCS.OFTO.TrafoHV.AgeRte.mag,DBA.OCS.OFTO.HVDC.AuxiliarySystem.TransformerAging.TrafoHV.AgeRte.mag
+DBA.OCS.OFTO.TrafoHV.HPTmpClc.mag,DBA.OCS.OFTO.HVDC.AuxiliarySystem.TransformerAging.TrafoHV.HPTmpClc.mag
+DBA.OCS.OFTO.TrafoHVWindingAgingFactor.HaTdFact.mag,DBA.OCS.OFTO.HVDC.AuxiliarySystem.TransformerAging.TrafoHVWindingAgingFactor.HaTdFact.mag
+DBA.OCS.OFTO.TrafoLV.AgeRte.mag,DBA.OCS.OFTO.HVDC.AuxiliarySystem.TransformerAging.TrafoLV.AgeRte.mag
+DBA.OCS.OFTO.TrafoLV.HPTmpClc.mag,DBA.OCS.OFTO.HVDC.AuxiliarySystem.TransformerAging.TrafoLV.HPTmpClc.mag
+DBA.OCS.OFTO.TrafoLVWindingAgingFactor.HaTdFact.mag,DBA.OCS.OFTO.HVDC.AuxiliarySystem.TransformerAging.TrafoLVWindingAgingFactor.HaTdFact.mag
+DBA.OCS.OFTO.TrafoMaxHotSpotTemperature.TmpSv.instMag,DBA.OCS.OFTO.HVDC.AuxiliarySystem.TransformerAging.TrafoMaxHotSpotTemperature.TmpSv.instMag
+DBA.OCS.OFTO.TrafoMaxTotalAgingFactor.HaTdFact.mag,DBA.OCS.OFTO.HVDC.AuxiliarySystem.TransformerAging.TrafoMaxTotalAgingFactor.HaTdFact.mag
+DBA.OCS.OFTO.TrafoTotalAgingCalculationHours.AgeRte.mag,DBA.OCS.OFTO.HVDC.AuxiliarySystem.TransformerAging.TrafoTotalAgingCalculationHours.AgeRte.mag
+DBA.OCS.OFTO.HVDC.Climate System Valve Hall.C80GA501A_AHURunningIndication.Ind.stVal,DBA.OCS.OFTO.HVDC.ClimateSystemValveHall.C80GA501A_AHURunningIndication.Ind.stVal
+DBA.OCS.OFTO.HVDC.Climate System Valve Hall.C80GA501A.Spd.mag,DBA.OCS.OFTO.HVDC.ClimateSystemValveHall.C80GA501A.Spd.mag
+DBA.OCS.OFTO.HVDC.Climate System Valve Hall.C80GA501B_AHURunningIndication.Ind.stVal,DBA.OCS.OFTO.HVDC.ClimateSystemValveHall.C80GA501B_AHURunningIndication.Ind.stVal
+DBA.OCS.OFTO.HVDC.Climate System Valve Hall.C80GA502A_AHURunningIndication.Ind.stVal,DBA.OCS.OFTO.HVDC.ClimateSystemValveHall.C80GA502A_AHURunningIndication.Ind.stVal
+DBA.OCS.OFTO.HVDC.Climate System Valve Hall.C80GA502A.Spd.mag,DBA.OCS.OFTO.HVDC.ClimateSystemValveHall.C80GA502A.Spd.mag
+DBA.OCS.OFTO.HVDC.Climate System Valve Hall.C80GA502B_AHURunningIndication.Ind.stVal,DBA.OCS.OFTO.HVDC.ClimateSystemValveHall.C80GA502B_AHURunningIndication.Ind.stVal
+DBA.OCS.OFTO.HVDC.Climate System Valve Hall.C80GA503A_AHURunningIndication.Ind.stVal,DBA.OCS.OFTO.HVDC.ClimateSystemValveHall.C80GA503A_AHURunningIndication.Ind.stVal
+DBA.OCS.OFTO.HVDC.Climate System Valve Hall.C80GA503A.Spd.mag,DBA.OCS.OFTO.HVDC.ClimateSystemValveHall.C80GA503A.Spd.mag
+DBA.OCS.OFTO.HVDC.Climate System Valve Hall.C80GA503B_AHURunningIndication.Ind.stVal,DBA.OCS.OFTO.HVDC.ClimateSystemValveHall.C80GA503B_AHURunningIndication.Ind.stVal
+DBA.OCS.OFTO.HVDC.Climate System Valve Hall.C80GA504A_AHURunningIndication.Ind.stVal,DBA.OCS.OFTO.HVDC.ClimateSystemValveHall.C80GA504A_AHURunningIndication.Ind.stVal

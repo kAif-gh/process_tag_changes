@@ -3,7 +3,7 @@ import time
 import pandas as pd
 from datetime import datetime
 import subprocess
-
+from collections import Counter
 
 query_template = """
 {
@@ -14,6 +14,7 @@ query_template = """
         }  
     }
 }"""
+
 
 def get_access_token(scope):
     """Fetch the Azure access token for the Dgraph API."""
@@ -31,6 +32,7 @@ def get_access_token(scope):
         print(f"Error fetching access token: {e}")
         return None
 
+
 def get_metadata_for_tag(graphql_endpoint, scope, tag_name, max_retries=5):
     """Query Dgraph for metadata of a given tag name using the access token, with retries."""
     query = query_template.replace("$tag_name", f'"{tag_name}"')
@@ -46,7 +48,7 @@ def get_metadata_for_tag(graphql_endpoint, scope, tag_name, max_retries=5):
         'Content-Type': 'application/json'
     }
 
-    attempts = 0 
+    attempts = 0
     while attempts < max_retries:
         try:
             response = requests.post(graphql_endpoint, json={'query': query}, headers=headers)
@@ -54,7 +56,7 @@ def get_metadata_for_tag(graphql_endpoint, scope, tag_name, max_retries=5):
             # Check if the response is successful
             if response.status_code == 200:
                 data = response.json()
-                
+
                 # print(data)
 
                 scada_signals = data.get('data', {}).get('queryScadaSignal', [])
@@ -133,14 +135,15 @@ def fetch_timestamps(graphql_endpoint, scope, df, source_column):
             # Check if 'metadata' exists and is not None before accessing it
             if 'metadata' not in record or record['metadata'] is None:
                 print(f"No metadata or invalid metadata found for record: {record}")
-                continue 
+                continue
 
-            # Check if the required timestamp field exists in the metadata
+                # Check if the required timestamp field exists in the metadata
             if '_provenanceRecordAuditRecordCreatedTimestamp' not in record['metadata']:
-                print(f"Timestamp field '_provenanceRecordAuditRecordCreatedTimestamp' not found in metadata for record: {record}")
-                continue 
+                print(
+                    f"Timestamp field '_provenanceRecordAuditRecordCreatedTimestamp' not found in metadata for record: {record}")
+                continue
 
-            # Fetch and process the timestamp field
+                # Fetch and process the timestamp field
             timestamp_str = record['metadata']['_provenanceRecordAuditRecordCreatedTimestamp']
             print(f"Fetched timestamp: {timestamp_str}")
 
@@ -172,6 +175,7 @@ def fetch_timestamps(graphql_endpoint, scope, df, source_column):
                 continue  # Skip to the next record if the timestamp is invalid
 
     return df, start_time, end_time, all_fetched_timestamps
+
 
 def fetch_and_update_tepid(graphql_endpoint, scope, df, column_mappings):
     """
@@ -217,7 +221,8 @@ def fetch_and_update_tepid(graphql_endpoint, scope, df, column_mappings):
                 print(f"No tepId found for tag: {tag}. Setting {new_column} to None.")
                 df.at[index, new_column] = None
 
-    return df  
+    return df
+
 
 def fetch_metadata_and_update(df, graphql_endpoint, scope, column_mappings, timestamp_column=None):
     """
@@ -317,6 +322,7 @@ def fetch_metadata_and_update(df, graphql_endpoint, scope, column_mappings, time
 from collections import defaultdict
 from datetime import datetime
 
+
 def count_datetime_occurrences(timestamp_list):
     timestamp_count = defaultdict(int)
 
@@ -324,6 +330,7 @@ def count_datetime_occurrences(timestamp_list):
         timestamp_count[timestamp] += 1
 
     return dict(timestamp_count)
+
 
 def store_timestamp_info_to_file(timestamp_info, output_file='timestamp_info.txt'):
     """
@@ -341,3 +348,10 @@ def store_timestamp_info_to_file(timestamp_info, output_file='timestamp_info.txt
             file.write(f"All timestamps fetched: {info['fetched_timestamps']}\n")
             file.write(f"Number of timestamps: {info['count']}\n\n")
     print(f"Timestamp information saved to '{output_file}'")
+
+def count_created_time_occurrences(csv_file_path):
+    df = pd.read_csv(csv_file_path)
+    created_time_column = df['createdTimeNewTag']
+    time_counts = Counter(created_time_column)
+    time_counts_dict = dict(time_counts)
+    print(f"This is the different created timestamp for new tags: \n '{time_counts_dict}'")
